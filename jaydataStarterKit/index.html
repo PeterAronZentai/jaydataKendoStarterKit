@@ -3,7 +3,7 @@
     <head>
         <title></title>
         <meta charset="utf-8" />
-        <script src="cordova.js"></script>
+        <!--<script src="cordova.js"></script>-->
         <script src="kendo/js/jquery.min.js"></script>
         <script src="kendo/js/kendo.mobile.min.js"></script>
         <script src="jaydata/jaydata.min.js"></script>
@@ -24,6 +24,7 @@
                 data-template="item-template"
                 data-bind="source: items, events: { click: removeItem }">
             </ul>
+            <a data-role="button" data-bind="click:addItem">Add new item</a>
         </div>
 
     	<script id="item-template" type="text/x-kendo-template">
@@ -31,6 +32,11 @@
     	</script>
         
         <script>
+    /* a simple bootstrap with JayData Item Store API */
+    $data.define("Cart", {
+        ProductName: String,
+        Amount: Number
+    });    
             
     viewModel = kendo.observable({
        items: [],
@@ -49,32 +55,29 @@
        removeItem: function(e) {
             e.item.css("color","silver");
             e.dataItem.remove().then(viewModel.displayCart);
+       },
+       addItem: function() {
+            return $data("Cart")
+                        .save({
+                            ProductName: "Product#" + Math.random().toString()[6], 
+                            Amount: Math.random().toString()[5] 
+                        })
+                        .then(function() {
+                            viewModel.set("dbBooting", false);
+                            viewModel.set("dbOK", true);
+                            viewModel.displayCart();
+                        })
+                        .fail(function() {
+                            viewModel.set("dbBooting", false);
+                            viewModel.set("dbError", true);
+                        });
        }
     });
     
     var app = new kendo.mobile.Application(document.body, { transition: "slide" });
-    
-    /* a simple bootstrap with JayData Item Store API */
-    $data.define("Cart", {
-        ProductName: String,
-        Amount: Number
-    });    
+    viewModel.addItem();    
    
             
-    $data("Cart")
-        .save({
-            ProductName: "Product#" + Math.random().toString()[6], 
-            Amount: Math.random().toString()[5] 
-        })
-        .then(function() {
-            viewModel.set("dbBooting", false);
-            viewModel.set("dbOK", true);
-            viewModel.displayCart();
-        })
-        .fail(function() {
-            viewModel.set("dbBooting", false);
-            viewModel.set("dbError", true);
-        });
         </script>
     </body>
 </html>
