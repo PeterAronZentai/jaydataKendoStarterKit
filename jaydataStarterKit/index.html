@@ -14,6 +14,7 @@
     <body>
         <div data-role="view" id="tabstrip-home" data-model="viewModel" data-title="Hello World!">
             <h1>Welcome!</h1>
+            <h4 data-bind="visible: dbBooting">Creating and opening database...</h4>
             <h4 data-bind="visible: dbOK">Database created. Test item inserted.</h4>
             <h4 data-bind="visible: dbError">Error creating the databaase</h4>
             <h3>Cart database</h3>
@@ -33,6 +34,7 @@
             
     viewModel = kendo.observable({
        items: [],
+       dbBooting: true,
        dbOK: false,
        dbError: false,
        displayCart: function() {
@@ -65,10 +67,12 @@
             Amount: Math.random().toString()[5] 
         })
         .then(function() {
+            viewModel.set("dbBooting", false);
             viewModel.set("dbOK", true);
             viewModel.displayCart();
         })
         .fail(function() {
+            viewModel.set("dbBooting", false);
             viewModel.set("dbError", true);
         });
         </script>
