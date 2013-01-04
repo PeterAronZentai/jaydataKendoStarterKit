@@ -30,10 +30,6 @@
     	</script>
         
         <script>
-    $data.define("Cart", {
-        ProductName: String,
-        Amount: Number
-    });    
             
     viewModel = kendo.observable({
        items: [],
@@ -56,6 +52,11 @@
     
     var app = new kendo.mobile.Application(document.body, { transition: "slide" });
     
+    /* a simple bootstrap with JayData Item Store API */
+    $data.define("Cart", {
+        ProductName: String,
+        Amount: Number
+    });    
    
             
     $data("Cart")
