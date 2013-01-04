@@ -10,9 +10,11 @@
         <script src="jaydata/jaydatamodules/kendo.js"></script>
         <link href="kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
         <link href="styles/main.css" rel="stylesheet" />
+        <!-- Cart entity type def and application viewModel lives here -->
+        <script src="scripts/main.js"></script>
     </head>
     <body>
-        <div data-role="view" id="tabstrip-home" data-model="viewModel" data-title="Hello World!">
+        <div data-role="view" id="tabstrip-home" data-model="viewModel" data-init="viewModel.initDatabase" data-title="Cart it!">
             <h1>Welcome!</h1>
             <h4 data-bind="visible: dbBooting">Creating and opening database...</h4>
             <h4 data-bind="visible: dbOK">Database created. Test item inserted.</h4>
@@ -31,53 +33,5 @@
             <span>${ProductName}</span> (${Amount}) - Tap to remove
     	</script>
         
-        <script>
-    /* a simple bootstrap with JayData Item Store API */
-    $data.define("Cart", {
-        ProductName: String,
-        Amount: Number
-    });    
-            
-    viewModel = kendo.observable({
-       items: [],
-       dbBooting: true,
-       dbOK: false,
-       dbError: false,
-       displayCart: function() {
-            $data("Cart")
-               .readAll()
-               .then(function(items) {
-                    viewModel.set("items", items.map(function(item) {
-                        return item.asKendoObservable();
-                    }));
-                });
-       },
-       removeItem: function(e) {
-            e.item.css("color","silver");
-            e.dataItem.remove().then(viewModel.displayCart);
-       },
-       addItem: function() {
-            return $data("Cart")
-                        .save({
-                            ProductName: "Product#" + Math.random().toString()[6], 
-                            Amount: Math.random().toString()[5] 
-                        })
-                        .then(function() {
-                            viewModel.set("dbBooting", false);
-                            viewModel.set("dbOK", true);
-                            viewModel.displayCart();
-                        })
-                        .fail(function() {
-                            viewModel.set("dbBooting", false);
-                            viewModel.set("dbError", true);
-                        });
-       }
-    });
-    
-    var app = new kendo.mobile.Application(document.body, { transition: "slide" });
-    viewModel.addItem();    
-   
-            
-        </script>
     </body>
 </html>
